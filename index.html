@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Clock</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:#0b1120;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:30px 20px;color:white}
+.container{width:100%;max-width:500px}
+h2{text-align:center;margin-bottom:20px;color:#60a5fa}
+.add{display:flex;gap:10px;margin-bottom:20px}
+select,button{padding:10px;border-radius:8px;border:none;font-size:14px}
+select{flex:1;background:#1e293b;color:white}
+button{background:#3b82f6;color:white;cursor:pointer}
+.grid{display:grid;gap:12px}
+.clock{background:#1e293b;padding:15px;border-radius:12px;display:flex;justify-content:space-between;align-items:center}
+.city{font-weight:500}
+.time{font-size:20px;font-weight:bold;color:#10b981}
+.del{background:#ef4444;color:white;border:none;padding:5px 8px;border-radius:6px;cursor:pointer;margin-left:10px}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>🌍 World Clock</h2>
+  <div class="add">
+    <select id="zone">
+      <option value="Asia/Tashkent">Toshkent</option><option value="Europe/London">London</option>
+      <option value="America/New_York">New York</option><option value="Asia/Tokyo">Tokyo</option>
+      <option value="Europe/Moscow">Moskva</option><option value="Australia/Sydney">Sidney</option>
+      <option value="Europe/Berlin">Berlin</option><option value="Asia/Dubai">Dubay</option>
+    </select>
+    <button onclick="addCity()">➕ Qo'shish</button>
+  </div>
+  <div class="grid" id="list"></div>
+</div>
+<script>
+let cities=JSON.parse(localStorage.getItem('zones'))||['Asia/Tashkent'];
+function addCity(){
+  const v=document.getElementById('zone').value;
+  if(!cities.includes(v)){cities.push(v);save();render()}
+}
+function remove(i){cities.splice(i,1);save();render()}
+function save(){localStorage.setItem('zones',JSON.stringify(cities))}
+function render(){
+  document.getElementById('list').innerHTML=cities.map((c,i)=>{
+    const t=new Date().toLocaleTimeString('uz-UZ',{timeZone:c,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const d=new Date().toLocaleDateString('uz-UZ',{timeZone:c,weekday:'short',day:'numeric',month:'short'});
+    return `<div class="clock"><div><div class="city">${c.split('/')[1]}</div><div style="font-size:12px;color:#94a3b8">${d}</div></div><div class="time">${t}</div><button class="del" onclick="remove(${i})">✕</button></div>`;
+  }).join('');
+}
+setInterval(render,1000);render();
+</script>
+</body>
+</html>
